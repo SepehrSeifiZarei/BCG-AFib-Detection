@@ -12,4 +12,6 @@ Install the required pip packages from `requirements.txt` file using the followi
 pip install -r requirements.txt
 ```
 
-Recommended Python version 3.10.4 (tested with Python 3.10.4).
+Tested with Python 3.8.10
+
+
