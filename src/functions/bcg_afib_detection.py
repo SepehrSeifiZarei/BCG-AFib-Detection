@@ -39,97 +39,97 @@ def create_model(input_shape1, input_shape2, cnn_filters_number=32, activation_f
   # Branch 1
   CNN1 = layers.Conv1D(filters=filters_number, kernel_size=100, strides=5, name="CNN1")(inputs1) #, activation="gelu"
   CNN1 = layers.BatchNormalization()(CNN1)
-  CNN11 = keras.layers.Activation(activation_function)(CNN1)
+  CNN1 = keras.layers.Activation(activation_function)(CNN1)
   if dropout_ratio:
-      CNN11 = layers.Dropout(dropout_ratio)(CNN11)
+      CNN1 = layers.Dropout(dropout_ratio)(CNN1)
 
   #****************************************************
   #local feature block
-  CNN1 = layers.Conv1D(filters=filters_number*2, kernel_size=3, strides=2, padding='same', name="CNN2")(CNN11)
-  CNN1 = layers.BatchNormalization()(CNN1)
-  CNN1 = keras.layers.Activation(activation_function)(CNN1)
-  CNN1 = layers.Conv1D(filters=filters_number*2, kernel_size=3, strides=1, padding='same', name="CNN3")(CNN1)
-  CNN12 = layers.BatchNormalization()(CNN1)
+  BlockCNN1 = layers.Conv1D(filters=filters_number*2, kernel_size=3, strides=2, padding='same', name="BlockCNN11")(CNN1)
+  BlockCNN1 = layers.BatchNormalization()(BlockCNN1)
+  BlockCNN1 = keras.layers.Activation(activation_function)(BlockCNN1)
+  BlockCNN1 = layers.Conv1D(filters=filters_number*2, kernel_size=3, strides=1, padding='same', name="BlockCNN12")(BlockCNN1)
+  BlockCNN1 = layers.BatchNormalization()(CNN1)
 
-  CNN22 = layers.Conv1D(filters=filters_number*2, kernel_size=1, strides=2, name="CNN4")(CNN11)
-  CNN11 = layers.Concatenate(name="Merging")([CNN12, CNN22])
-  CNN11 = keras.layers.Activation(activation_function)(CNN1)
+  BlockCNN2 = layers.Conv1D(filters=filters_number*2, kernel_size=1, strides=2, name="BlockCNN21")(CNN1)
+  BlockOut1 = layers.Concatenate(name="Merging1")([BlockCNN1, BlockCNN2])
+  BlockOut1 = keras.layers.Activation(activation_function)(BlockOut1)
   # CNN11 = layers.Dropout(0.2)(CNN11)
 
   #local feature block
-  CNN1 = layers.Conv1D(filters=filters_number*4, kernel_size=3, strides=2, padding='same', name="CNN5")(CNN11)
-  CNN1 = layers.BatchNormalization()(CNN1)
-  CNN1 = keras.layers.Activation(activation_function)(CNN1)
-  CNN1 = layers.Conv1D(filters=filters_number*4, kernel_size=3, strides=1, padding='same', name="CNN6")(CNN1)
-  CNN12 = layers.BatchNormalization()(CNN1)
+  BlockCNN3 = layers.Conv1D(filters=filters_number*4, kernel_size=3, strides=2, padding='same', name="BlockCNN31")(BlockOut1)
+  BlockCNN3 = layers.BatchNormalization()(BlockCNN3)
+  BlockCNN3 = keras.layers.Activation(activation_function)(BlockCNN3)
+  BlockCNN3 = layers.Conv1D(filters=filters_number*4, kernel_size=3, strides=1, padding='same', name="BlockCNN32")(BlockCNN3)
+  BlockCNN3 = layers.BatchNormalization()(BlockCNN3)
 
-  CNN22 = layers.Conv1D(filters=filters_number*4, kernel_size=1, strides=2, name="CNN7")(CNN11)
-  CNN11 = layers.Concatenate(name="Merging")([CNN12, CNN22])
-  CNN11 = keras.layers.Activation(activation_function)(CNN1)
+  BlockCNN4 = layers.Conv1D(filters=filters_number*4, kernel_size=1, strides=2, name="BlockCNN41")(BlockOut1)
+  BlockOut2 = layers.Concatenate(name="Merging2")([BlockCNN3, BlockCNN4])
+  BlockOut2 = keras.layers.Activation(activation_function)(BlockOut2)
   # CNN11 = layers.Dropout(0.2)(CNN11)
 
   #local feature block
-  CNN1 = layers.Conv1D(filters=filters_number*8, kernel_size=3, strides=2, padding='same', name="CNN8")(CNN11)
-  CNN1 = layers.BatchNormalization()(CNN1)
-  CNN1 = keras.layers.Activation(activation_function)(CNN1)
-  CNN1 = layers.Conv1D(filters=filters_number*8, kernel_size=3, strides=1, padding='same', name="CNN9")(CNN1)
-  CNN12 = layers.BatchNormalization()(CNN1)
+  BlockCNN5 = layers.Conv1D(filters=filters_number*8, kernel_size=3, strides=2, padding='same', name="BlockCNN51")(BlockOut2)
+  BlockCNN5 = layers.BatchNormalization()(BlockCNN5)
+  BlockCNN5 = keras.layers.Activation(activation_function)(BlockCNN5)
+  BlockCNN5 = layers.Conv1D(filters=filters_number*8, kernel_size=3, strides=1, padding='same', name="BlockCNN52")(BlockCNN5)
+  BlockCNN5 = layers.BatchNormalization()(BlockCNN5)
 
-  CNN22 = layers.Conv1D(filters=filters_number*8, kernel_size=1, strides=2, name="CNN10")(CNN11)
-  CNN11 = layers.Concatenate(name="Merging")([CNN12, CNN22])
-  CNN11 = keras.layers.Activation(activation_function)(CNN1)
+  BlockCNN6 = layers.Conv1D(filters=filters_number*8, kernel_size=1, strides=2, name="BlockCNN61")(BlockOut2)
+  BlockOut3 = layers.Concatenate(name="Merging3")([BlockCNN5, BlockCNN6])
+  BlockOut3 = keras.layers.Activation(activation_function)(BlockOut3)
   # CNN11 = layers.Dropout(0.2)(CNN11)
 
   #local feature block
-  CNN1 = layers.Conv1D(filters=filters_number*16, kernel_size=3, strides=2, padding='same', name="CNN11")(CNN11)
-  CNN1 = layers.BatchNormalization()(CNN1)
-  CNN1 = keras.layers.Activation(activation_function)(CNN1)
-  CNN1 = layers.Conv1D(filters=filters_number*16, kernel_size=3, strides=1, padding='same', name="CNN12")(CNN1)
-  CNN12 = layers.BatchNormalization()(CNN1)
+  BlockCNN7 = layers.Conv1D(filters=filters_number*16, kernel_size=3, strides=2, padding='same', name="BlockCNN71")(BlockOut3)
+  BlockCNN7 = layers.BatchNormalization()(BlockCNN7)
+  BlockCNN7 = keras.layers.Activation(activation_function)(BlockCNN7)
+  BlockCNN7 = layers.Conv1D(filters=filters_number*16, kernel_size=3, strides=1, padding='same', name="BlockCNN72")(BlockCNN7)
+  BlockCNN7 = layers.BatchNormalization()(BlockCNN7)
 
-  CNN22 = layers.Conv1D(filters=filters_number*16, kernel_size=1, strides=2, name="CNN13")(CNN11)
-  CNN11 = layers.Concatenate(name="Merging")([CNN12, CNN22])
-  CNN11 = keras.layers.Activation(activation_function)(CNN1)
+  BlockCNN8 = layers.Conv1D(filters=filters_number*16, kernel_size=1, strides=2, name="BlockCNN81")(BlockOut3)
+  BlockOut4 = layers.Concatenate(name="Merging4")([BlockCNN7, BlockCNN8])
+  BlockOut4 = keras.layers.Activation(activation_function)(BlockOut4)
   # CNN11 = layers.Dropout(0.2)(CNN11)
   #****************************************************
-  avr1 = tf.keras.layers.GlobalAveragePooling1D()(CNN11)
-
+  avr1 = tf.keras.layers.GlobalAveragePooling1D()(BlockOut4)
+  ###################################################################################################
   # Branch 2
   CNN2 = layers.Conv1D(filters=filters_number, kernel_size=100, strides=5, name="CN1")(inputs2) #, activation="gelu"
   CNN2 = layers.BatchNormalization()(CNN2)
-  CNN21 = keras.layers.Activation(activation_function)(CNN2)
+  CNN2 = keras.layers.Activation(activation_function)(CNN2)
   if dropout_ratio:
-      CNN21 = layers.Dropout(dropout_ratio)(CNN21)
+      CNN2 = layers.Dropout(dropout_ratio)(CNN2)
   
   #****************************************************
   #local feature block
-  CNN2 = layers.Conv1D(filters=filters_number*8, kernel_size=3, strides=2, padding='same', name="CN2")(CNN21)
-  CNN2 = layers.BatchNormalization()(CNN2)
-  CNN2 = keras.layers.Activation(activation_function)(CNN2)
-  CNN2 = layers.Conv1D(filters=filters_number*8, kernel_size=3, strides=1, padding='same', name="CN3")(CNN2)
-  CNN22 = layers.BatchNormalization()(CNN2)
+  Block2CNN1 = layers.Conv1D(filters=filters_number*8, kernel_size=3, strides=2, padding='same', name="Block2CNN11")(CNN2)
+  Block2CNN1 = layers.BatchNormalization()(Block2CNN1)
+  Block2CNN1 = keras.layers.Activation(activation_function)(Block2CNN1)
+  Block2CNN1 = layers.Conv1D(filters=filters_number*8, kernel_size=3, strides=1, padding='same', name="Block2CNN12")(Block2CNN1)
+  Block2CNN1 = layers.BatchNormalization()(Block2CNN1)
 
-  CNN23 = layers.Conv1D(filters=filters_number*8, kernel_size=1, strides=2, name="CN4")(CNN21)
-  CNN21 = layers.Concatenate(name="Merging")([CNN23, CNN22])
-  CNN21 = keras.layers.Activation(activation_function)(CNN2)
+  Block2CNN2 = layers.Conv1D(filters=filters_number*8, kernel_size=1, strides=2, name="Block2CNN21")(CNN2)
+  Block2Out1 = layers.Concatenate(name="Merging5")([Block2CNN1, Block2CNN2])
+  Block2Out1 = keras.layers.Activation(activation_function)(Block2Out1)
   # CNN11 = layers.Dropout(0.2)(CNN11)
 
   #local feature block
-  CNN2 = layers.Conv1D(filters=filters_number*16, kernel_size=3, strides=2, padding='same', name="CN5")(CNN21)
-  CNN2 = layers.BatchNormalization()(CNN2)
-  CNN2 = keras.layers.Activation(activation_function)(CNN2)
-  CNN2 = layers.Conv1D(filters=filters_number*16, kernel_size=3, strides=1, padding='same', name="CN6")(CNN2)
-  CNN22 = layers.BatchNormalization()(CNN2)
+  Block2CNN3 = layers.Conv1D(filters=filters_number*16, kernel_size=3, strides=2, padding='same', name="Block2CNN31")(Block2Out1)
+  Block2CNN3 = layers.BatchNormalization()(Block2CNN3)
+  Block2CNN3 = keras.layers.Activation(activation_function)(Block2CNN3)
+  Block2CNN3 = layers.Conv1D(filters=filters_number*16, kernel_size=3, strides=1, padding='same', name="Block2CNN32")(Block2CNN3)
+  Block2CNN3 = layers.BatchNormalization()(Block2CNN3)
 
-  CNN23 = layers.Conv1D(filters=filters_number*16, kernel_size=1, strides=2, name="CN7")(CNN21)
-  CNN21 = layers.Concatenate(name="Merging")([CNN23, CNN22])
-  CNN21 = keras.layers.Activation(activation_function)(CNN2)
+  Block2CNN4 = layers.Conv1D(filters=filters_number*16, kernel_size=1, strides=2, name="Block2CNN41")(Block2Out1)
+  Block2Out2 = layers.Concatenate(name="Merging6")([Block2CNN3, Block2CNN4])
+  Block2Out2 = keras.layers.Activation(activation_function)(Block2Out2)
   # CNN11 = layers.Dropout(0.2)(CNN11)
   #*****************************************************
   
-  avr2 = tf.keras.layers.GlobalAveragePooling1D()(CNN21)
+  avr2 = tf.keras.layers.GlobalAveragePooling1D()(Block2Out2)
 
-  con = layers.Concatenate(name="Merging")([avr1, avr2])
+  con = layers.Concatenate(name="Merging7")([avr1, avr2])
 
   dense1 = layers.Dense(256, name="FC1")(con)
   dense1 = keras.layers.Activation(activation_function)(dense1)
