@@ -51,7 +51,7 @@ def create_model(input_shape1, input_shape2, cnn_filters_number=32, activation_f
   BlockCNN1 = layers.Conv1D(filters=filters_number*2, kernel_size=3, strides=1, padding='same', name="BlockCNN12")(BlockCNN1)
   BlockCNN1 = layers.BatchNormalization()(CNN1)
 
-  BlockCNN2 = layers.Conv1D(filters=filters_number*2, kernel_size=1, strides=2, name="BlockCNN21")(CNN1)
+  BlockCNN2 = layers.Conv1D(filters=filters_number*4, kernel_size=1, strides=1, name="BlockCNN21")(CNN1)
   BlockOut1 = layers.Concatenate(name="Merging1")([BlockCNN1, BlockCNN2])
   BlockOut1 = keras.layers.Activation(activation_function)(BlockOut1)
   # CNN11 = layers.Dropout(0.2)(CNN11)
