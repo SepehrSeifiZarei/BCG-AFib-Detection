@@ -8,7 +8,14 @@ from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.compat.v1.keras.layers import CuDNNLSTM
 
-def create_model(input_shape, cnn_filters_number=32, activation_function=tf.keras.layers.ReLU(), dropout_ratio=0.2, summary_verbose=True, model_plot=False):
+#initializing
+from keras import backend as K
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+from tensorflow.compat.v1.keras.layers import CuDNNLSTM
+
+def create_model(input_shape1, input_shape2, cnn_filters_number=32, activation_function=tf.keras.layers.ReLU(), dropout_ratio=0.2, summary_verbose=True, model_plot=False):
   '''
       Create 1D CNN model
 
@@ -24,7 +31,8 @@ def create_model(input_shape, cnn_filters_number=32, activation_function=tf.kera
       model (tf model): created Tensorflow model
   '''
 
-  inputs1 = keras.Input(shape=input_shape, name="BCG")
+  inputs1 = keras.Input(shape=input_shape1, name="BCG")
+  inputs2 = keras.Input(shape=input_shape2, name="AUTO")
   
   activation_function = tf.keras.layers.ReLU()
   filters_number = 32
@@ -84,9 +92,46 @@ def create_model(input_shape, cnn_filters_number=32, activation_function=tf.kera
   CNN11 = keras.layers.Activation(activation_function)(CNN1)
   # CNN11 = layers.Dropout(0.2)(CNN11)
   #****************************************************
-  avr = tf.keras.layers.GlobalAveragePooling1D()(CNN11)
+  avr1 = tf.keras.layers.GlobalAveragePooling1D()(CNN11)
 
-  dense1 = layers.Dense(128, name="FC1")(avr)
+  # Branch 2
+  CNN2 = layers.Conv1D(filters=filters_number, kernel_size=100, strides=5, name="CN1")(inputs2) #, activation="gelu"
+  CNN2 = layers.BatchNormalization()(CNN2)
+  CNN21 = keras.layers.Activation(activation_function)(CNN2)
+  if dropout_ratio:
+      CNN21 = layers.Dropout(dropout_ratio)(CNN21)
+  
+  #****************************************************
+  #local feature block
+  CNN2 = layers.Conv1D(filters=filters_number*8, kernel_size=3, strides=2, padding='same', name="CN2")(CNN21)
+  CNN2 = layers.BatchNormalization()(CNN2)
+  CNN2 = keras.layers.Activation(activation_function)(CNN2)
+  CNN2 = layers.Conv1D(filters=filters_number*8, kernel_size=3, strides=1, padding='same', name="CN3")(CNN2)
+  CNN22 = layers.BatchNormalization()(CNN2)
+
+  CNN23 = layers.Conv1D(filters=filters_number*8, kernel_size=1, strides=2, name="CN4")(CNN21)
+  CNN21 = layers.Concatenate(name="Merging")([CNN23, CNN22])
+  CNN21 = keras.layers.Activation(activation_function)(CNN2)
+  # CNN11 = layers.Dropout(0.2)(CNN11)
+
+  #local feature block
+  CNN2 = layers.Conv1D(filters=filters_number*16, kernel_size=3, strides=2, padding='same', name="CN5")(CNN21)
+  CNN2 = layers.BatchNormalization()(CNN2)
+  CNN2 = keras.layers.Activation(activation_function)(CNN2)
+  CNN2 = layers.Conv1D(filters=filters_number*16, kernel_size=3, strides=1, padding='same', name="CN6")(CNN2)
+  CNN22 = layers.BatchNormalization()(CNN2)
+
+  CNN23 = layers.Conv1D(filters=filters_number*16, kernel_size=1, strides=2, name="CN7")(CNN21)
+  CNN21 = layers.Concatenate(name="Merging")([CNN23, CNN22])
+  CNN21 = keras.layers.Activation(activation_function)(CNN2)
+  # CNN11 = layers.Dropout(0.2)(CNN11)
+  #*****************************************************
+  
+  avr2 = tf.keras.layers.GlobalAveragePooling1D()(CNN21)
+
+  con = layers.Concatenate(name="Merging")([avr1, avr2])
+
+  dense1 = layers.Dense(256, name="FC1")(con)
   dense1 = keras.layers.Activation(activation_function)(dense1)
   if dropout_ratio:
       dense1 = layers.Dropout(dropout_ratio)(dense1)
@@ -103,7 +148,7 @@ def create_model(input_shape, cnn_filters_number=32, activation_function=tf.kera
   outputs = layers.Dense(1, activation="sigmoid", name="Output")(dense1)
 
   # model = keras.Model(inputs=[inputs1, inputs2], outputs=outputs, name="LSTM_model")
-  model = keras.Model(inputs=[inputs1], outputs=outputs, name="LSTM_model")
+  model = keras.Model(inputs=[inputs1, inputs2], outputs=outputs, name="LSTM_model")
 
   if summary_verbose:
       model.summary()
@@ -112,7 +157,7 @@ def create_model(input_shape, cnn_filters_number=32, activation_function=tf.kera
       tf.keras.utils.plot_model(model)
 
   return model
-#end create_model
+#end create_model#end create_model
 
 def my_metric_bcg_model(y_true, y_pred):
     """
