@@ -37,7 +37,10 @@ def finding_files_path(path=os.getcwd(), suffix='csv', containing_word='', find_
             #end if
         #end for
     #end for
-
+    
+    csv_paths.sort()
+    subjects_id.sort()
+    
     if verbose:
         print('[INFO]',len(csv_paths),suffix, 'Paths')
         if find_subject:

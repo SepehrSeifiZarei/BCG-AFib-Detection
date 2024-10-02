@@ -100,7 +100,7 @@ def clean_signal(phase1_dict):
 
         for i in range(len(phase1_dict[subject]['BCG_low'])):
             try:
-                if i%500 == 0 :
+                if i%10 == 0 :
                     print('   [INFO]',i,'segments were cleaned')
                 #end if
 
@@ -115,8 +115,8 @@ def clean_signal(phase1_dict):
                 # print(len(sig))
                 if len(sig)!=0:
 
-                    start_point = find_start_point(sig[:,1])
-                    end_point = find_end_point(sig[:,1])
+                    start_point = finding_start_points(sig[:,1])
+                    end_point = finding_end_points(sig[:,1])
 
                     if len(start_point)!=0:
                         pass
@@ -172,7 +172,7 @@ def clean_signal(phase1_dict):
             except:
                 print('something went wrong on segment',i) 
         #end for segments
-
+        print('   [INFO]',i,'segments were cleaned')
         phase1_clean_dict[subject] = {'ECG': clean_sig_ecg, 'BCG_hi': clean_sig_bcg_hi, 'BCG_low': clean_sig_bcg_low}
 
     #end for subject
